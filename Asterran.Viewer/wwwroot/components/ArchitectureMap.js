@@ -192,7 +192,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                         <div className="empty-state">No projects loaded</div>
                     ) : (
                         projects.map(proj => (
-                            <label key={proj.ProjectName} className="project-tree-item">
+                            <label key={proj.ProjectName} className="project-tree-item" title={proj.ProjectName}>
                                 <input 
                                     type="checkbox"
                                     checked={activeCheckedProjects[proj.ProjectName] !== false}
@@ -276,7 +276,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                             />
 
                                             <text x={42} y={24} className="node-title">
-                                                {proj.ProjectName.length > 20 ? proj.ProjectName.substring(0, 18) + "..." : proj.ProjectName}
+                                                {proj.ProjectName}
                                             </text>
 
                                             {isExpanded && (
@@ -291,7 +291,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                                             <g key={file} transform={`translate(10, ${y})`}>
                                                                 <path d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z" fill="rgba(255,255,255,0.4)" transform="scale(0.5) translate(0, -4)" />
                                                                 <text x={16} y={8} className="node-file-text">
-                                                                    {file.length > 25 ? file.substring(0, 23) + "..." : file}
+                                                                    {file}
                                                                 </text>
                                                             </g>
                                                         );
@@ -311,7 +311,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                                             <g key={file} transform={`translate(18, ${folderY + 22 + fIdx * 16})`}>
                                                                 <path d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z" fill="rgba(255,255,255,0.3)" transform="scale(0.4) translate(0, -4)" />
                                                                 <text x={14} y={6} className="node-file-text" style={{ fontSize: "8px" }}>
-                                                                    {file.split('/').pop().length > 24 ? file.split('/').pop().substring(0, 22) + "..." : file.split('/').pop()}
+                                                                    {file.split('/').pop()}
                                                                 </text>
                                                             </g>
                                                         ));
