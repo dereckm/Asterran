@@ -9,15 +9,15 @@ namespace Asterran.Connectors
 {
     public class AntigravityTranscriptConnector : ILlmConnector
     {
-        public event EventHandler<LlmActivityEventArgs> OnActivity;
-        private string _targetFilePath;
+        public event EventHandler<LlmActivityEventArgs>? OnActivity;
+        private string? _targetFilePath;
         private string _brainRootPath;
-        private FileSystemWatcher _watcher;
+        private FileSystemWatcher? _watcher;
         private long _lastPosition = 0;
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
         private readonly object _lock = new object();
 
-        public AntigravityTranscriptConnector(string specificConversationId = null)
+        public AntigravityTranscriptConnector(string? specificConversationId = null)
         {
             // Dynamically resolve the user profile directory (e.g., C:\Users\K24)
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -63,11 +63,11 @@ namespace Asterran.Connectors
             }
         }
 
-        private string FindMostRecentTranscript()
+        private string? FindMostRecentTranscript()
         {
             if (!Directory.Exists(_brainRootPath)) return null;
 
-            string mostRecentFile = null;
+            string? mostRecentFile = null;
             DateTime lastWriteTime = DateTime.MinValue;
 
             try
@@ -139,7 +139,7 @@ namespace Asterran.Connectors
             {
                 if (_watcher != null) _watcher.Dispose();
 
-                string directory = Path.GetDirectoryName(filePath);
+                string directory = Path.GetDirectoryName(filePath)!;
                 string filename = Path.GetFileName(filePath);
 
                 _watcher = new FileSystemWatcher(directory, filename)
@@ -172,7 +172,7 @@ namespace Asterran.Connectors
 
                         using (var reader = new StreamReader(fs, Encoding.UTF8))
                         {
-                            string line;
+                            string? line;
                             while ((line = reader.ReadLine()) != null)
                             {
                                 if (string.IsNullOrWhiteSpace(line)) continue;
@@ -202,12 +202,12 @@ namespace Asterran.Connectors
                 var root = doc.RootElement;
 
                 int stepIndex = root.TryGetProperty("step_index", out var stepProp) ? stepProp.GetInt32() : 0;
-                string source = root.TryGetProperty("source", out var srcProp) ? srcProp.GetString() : "";
-                string type = root.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : "";
-                string content = root.TryGetProperty("content", out var contentProp) ? contentProp.GetString() : "";
+                string source = root.TryGetProperty("source", out var srcProp) ? srcProp.GetString() ?? "" : "";
+                string type = root.TryGetProperty("type", out var typeProp) ? typeProp.GetString() ?? "" : "";
+                string content = root.TryGetProperty("content", out var contentProp) ? contentProp.GetString() ?? "" : "";
 
-                string activityType = null;
-                string mappedSource = null;
+                string? activityType = null;
+                string? mappedSource = null;
 
                 if (type == "USER_INPUT")
                 {
@@ -232,15 +232,15 @@ namespace Asterran.Connectors
                     {
                         if (tool.TryGetProperty("name", out var nameProp))
                         {
-                            string toolName = nameProp.GetString();
+                            string toolName = nameProp.GetString() ?? "";
                             string toolSummary = "";
-                            string targetFile = null;
+                            string? targetFile = null;
 
                             if (tool.TryGetProperty("args", out var argsProp) && argsProp.ValueKind == JsonValueKind.Object)
                             {
                                 if (argsProp.TryGetProperty("toolSummary", out var sumProp))
                                 {
-                                    toolSummary = sumProp.GetString();
+                                    toolSummary = sumProp.GetString() ?? "";
                                 }
                                 if (argsProp.TryGetProperty("TargetFile", out var fileProp))
                                 {
@@ -267,7 +267,7 @@ namespace Asterran.Connectors
                     {
                         ActivityType = activityType,
                         Content = content,
-                        Source = mappedSource,
+                        Source = mappedSource ?? "",
                         Timestamp = DateTime.Now,
                         StepIndex = stepIndex
                     });

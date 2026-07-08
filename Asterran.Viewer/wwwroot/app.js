@@ -17,6 +17,7 @@ function App() {
     const [activeCheckedProjects, setActiveCheckedProjects] = useState({});
     const [expandedProjectName, setExpandedProjectName] = useState(null);
     const activeFileDiffPathRef = useRef(null);
+    const knownViolationIdsRef = useRef(new Set());
 
     useEffect(() => {
         activeFileDiffPathRef.current = activeFileDiffPath;
@@ -61,9 +62,12 @@ function App() {
                 break;
             case "architecture":
                 setProjects(payload.data.projects || []);
-                setViolations(payload.data.violations || []);
-                
-                if (payload.data.violations && payload.data.violations.length > 0) {
+                const newViolations = payload.data.violations || [];
+                setViolations(newViolations);
+
+                const hasNewViolation = newViolations.some(v => !knownViolationIdsRef.current.has(v.Id));
+                knownViolationIdsRef.current = new Set(newViolations.map(v => v.Id));
+                if (hasNewViolation) {
                     setActiveRightTab("guardrails");
                 }
                 break;

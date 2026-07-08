@@ -5,8 +5,8 @@ namespace Asterran.Engine.Guardrails
     public class GuardrailResult
     {
         public bool IsViolated { get; set; }
-        public string Message { get; set; }
-        public string RuleName { get; set; }
+        public string? Message { get; set; }
+        public string? RuleName { get; set; }
     }
 
     public interface IGuardrailRule

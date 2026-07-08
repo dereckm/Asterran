@@ -49,9 +49,16 @@ function InspectionPanel({ activeTab, setActiveTab, violations, changedFiles, ac
                                         <div className="violation-details">{v.ProjectName} &bull; {PathGetFileName(v.FilePath)}</div>
                                         <div className="violation-msg">{v.Message}</div>
                                     </div>
-                                    <button className="btn btn-sm btn-clear-violation" onClick={() => onClearViolation(v.Id)}>
-                                        <i className="fa-solid fa-check"></i> Clear
-                                    </button>
+                                    <div className="violation-actions">
+                                        {v.FilePath && changedFiles[v.FilePath] && (
+                                            <button className="btn btn-sm btn-view-diff" onClick={() => selectFileForDiff(v.FilePath)} title="View diff for this file">
+                                                <i className="fa-solid fa-code-compare"></i> Diff
+                                            </button>
+                                        )}
+                                        <button className="btn btn-sm btn-clear-violation" onClick={() => onClearViolation(v.Id)}>
+                                            <i className="fa-solid fa-check"></i> Clear
+                                        </button>
+                                    </div>
                                 </div>
                             ))
                         )}

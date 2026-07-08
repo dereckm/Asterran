@@ -8,17 +8,17 @@ namespace Asterran.Connectors
 {
     public class ClaudeTranscriptConnector : ILlmConnector
     {
-        public event EventHandler<LlmActivityEventArgs> OnActivity;
+        public event EventHandler<LlmActivityEventArgs>? OnActivity;
         private readonly string _projectsRoot;
-        private readonly string _sessionId;
-        private string _targetFilePath;
-        private FileSystemWatcher _watcher;
+        private readonly string? _sessionId;
+        private string? _targetFilePath;
+        private FileSystemWatcher? _watcher;
         private long _lastPosition = 0;
         private int _stepIndex = 0;
         private readonly object _lock = new object();
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
-        public ClaudeTranscriptConnector(string sessionId = null)
+        public ClaudeTranscriptConnector(string? sessionId = null)
         {
             string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             _projectsRoot = Path.Combine(userProfile, ".claude", "projects");
@@ -59,7 +59,7 @@ namespace Asterran.Connectors
             }
         }
 
-        private string FindSessionFile(string sessionId)
+        private string? FindSessionFile(string sessionId)
         {
             if (!Directory.Exists(_projectsRoot)) return null;
             try
@@ -77,10 +77,10 @@ namespace Asterran.Connectors
             return null;
         }
 
-        private string FindMostRecentSession()
+        private string? FindMostRecentSession()
         {
             if (!Directory.Exists(_projectsRoot)) return null;
-            string mostRecent = null;
+            string? mostRecent = null;
             DateTime lastWrite = DateTime.MinValue;
             try
             {
@@ -142,7 +142,7 @@ namespace Asterran.Connectors
             {
                 if (_watcher != null) _watcher.Dispose();
 
-                string dir = Path.GetDirectoryName(filePath);
+                string dir = Path.GetDirectoryName(filePath)!;
                 string filename = Path.GetFileName(filePath);
 
                 _watcher = new FileSystemWatcher(dir, filename)
@@ -166,7 +166,7 @@ namespace Asterran.Connectors
                     if (fs.Length < _lastPosition) _lastPosition = 0;
                     fs.Seek(_lastPosition, SeekOrigin.Begin);
                     using var reader = new StreamReader(fs, Encoding.UTF8);
-                    string line;
+                    string? line;
                     while ((line = reader.ReadLine()) != null)
                     {
                         if (!string.IsNullOrWhiteSpace(line)) ParseAndEmitLine(line);
@@ -189,13 +189,13 @@ namespace Asterran.Connectors
                 var root = doc.RootElement;
 
                 if (!root.TryGetProperty("type", out var typeProp)) return;
-                string type = typeProp.GetString();
+                string? type = typeProp.GetString();
 
                 if (!root.TryGetProperty("message", out var msgProp)) return;
 
                 if (type == "user")
                 {
-                    string text = ExtractTextContent(msgProp);
+                    string? text = ExtractTextContent(msgProp);
                     if (!string.IsNullOrEmpty(text))
                     {
                         OnActivity?.Invoke(this, new LlmActivityEventArgs
@@ -214,12 +214,12 @@ namespace Asterran.Connectors
                         || contentArr.ValueKind != JsonValueKind.Array)
                         return;
 
-                    string thoughtText = null;
+                    string? thoughtText = null;
 
                     foreach (var block in contentArr.EnumerateArray())
                     {
                         if (!block.TryGetProperty("type", out var blockTypeProp)) continue;
-                        string blockType = blockTypeProp.GetString();
+                        string? blockType = blockTypeProp.GetString();
 
                         if (blockType == "text")
                         {
@@ -254,9 +254,9 @@ namespace Asterran.Connectors
         private void EmitToolUseAction(JsonElement toolBlock, JsonElement root)
         {
             if (!toolBlock.TryGetProperty("name", out var nameProp)) return;
-            string toolName = nameProp.GetString();
+            string toolName = nameProp.GetString() ?? "";
 
-            string targetFile = null;
+            string? targetFile = null;
             string content = $"Tool: {toolName}";
 
             if (toolBlock.TryGetProperty("input", out var inputProp) && inputProp.ValueKind == JsonValueKind.Object)
@@ -273,7 +273,7 @@ namespace Asterran.Connectors
                 }
                 else if (inputProp.TryGetProperty("pattern", out var patProp))
                 {
-                    content = $"Tool: {toolName} | {patProp.GetString()}";
+                    content = $"Tool: {toolName} | {patProp.GetString() ?? ""}";
                 }
             }
 
@@ -288,7 +288,7 @@ namespace Asterran.Connectors
             });
         }
 
-        private static string ExtractTextContent(JsonElement msgElement)
+        private static string? ExtractTextContent(JsonElement msgElement)
         {
             if (!msgElement.TryGetProperty("content", out var content)) return null;
 
@@ -311,7 +311,7 @@ namespace Asterran.Connectors
         private static DateTime ParseTimestamp(JsonElement root)
         {
             if (root.TryGetProperty("timestamp", out var tsProp)
-                && DateTime.TryParse(tsProp.GetString(), out var dt))
+                && DateTime.TryParse(tsProp.GetString() ?? "", out var dt))
                 return dt;
             return DateTime.Now;
         }
