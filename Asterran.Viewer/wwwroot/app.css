@@ -798,6 +798,9 @@ input:checked + .slider:before {
     background: #060608;
     display: flex;
     flex-direction: column;
+    overflow-x: auto;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .diff-table {
@@ -807,11 +810,13 @@ input:checked + .slider:before {
     font-size: 0.8rem;
     line-height: 1.4;
     user-select: text;
+    table-layout: fixed;
 }
 
 .diff-row {
     display: flex;
     width: 100%;
+    min-width: 0;
 }
 
 .diff-row.added {
@@ -840,6 +845,7 @@ input:checked + .slider:before {
     word-break: break-all;
     flex: 1;
     color: #e4e4e7;
+    min-width: 0;
 }
 
 .diff-row.added .diff-content {
