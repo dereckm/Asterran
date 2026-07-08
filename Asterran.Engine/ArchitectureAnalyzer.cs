@@ -214,6 +214,14 @@ namespace Asterran.Engine
         {
             lock (_lock)
             {
+                // Auto-clear documentation drift warnings if the target doc was updated
+                if (filePath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+                {
+                    string docName = Path.GetFileName(filePath);
+                    _violations.RemoveAll(v => v.RuleName == "Documentation Drift Guardrail" && v.Message.Contains(docName));
+                    return;
+                }
+
                 string projectName = GetProjectForFile(filePath);
                 if (string.IsNullOrEmpty(projectName) || !_projects.ContainsKey(projectName)) return;
 
@@ -291,7 +299,127 @@ namespace Asterran.Engine
                 return result;
             }
 
+            // Check for Documentation Drift
+            var driftResult = CheckDocumentationDrift(filePath, addedCode);
+            if (driftResult.IsViolated)
+            {
+                return driftResult;
+            }
+
             return new GuardrailResult { IsViolated = false };
+        }
+
+        private GuardrailResult CheckDocumentationDrift(string filePath, string addedCode)
+        {
+            if (string.IsNullOrWhiteSpace(addedCode))
+                return new GuardrailResult { IsViolated = false };
+
+            if (filePath.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+                return new GuardrailResult { IsViolated = false };
+
+            try
+            {
+                if (!Directory.Exists(_workspacePath))
+                    return new GuardrailResult { IsViolated = false };
+
+                var mdFiles = Directory.GetFiles(_workspacePath, "*.md", SearchOption.AllDirectories);
+                if (mdFiles.Length == 0)
+                    return new GuardrailResult { IsViolated = false };
+
+                var codeVector = GetTermFrequencyVector(addedCode);
+                if (codeVector.Count == 0)
+                    return new GuardrailResult { IsViolated = false };
+
+                foreach (var mdFile in mdFiles)
+                {
+                    if (mdFile.Contains("bin" + Path.DirectorySeparatorChar) || 
+                        mdFile.Contains("obj" + Path.DirectorySeparatorChar) || 
+                        mdFile.Contains(".git" + Path.DirectorySeparatorChar) || 
+                        mdFile.Contains(".vs" + Path.DirectorySeparatorChar) || 
+                        mdFile.Contains("TestWorkspace" + Path.DirectorySeparatorChar))
+                        continue;
+
+                    string mdContent = File.ReadAllText(mdFile);
+                    var docVector = GetTermFrequencyVector(mdContent);
+
+                    double similarity = ComputeCosineSimilarity(codeVector, docVector);
+                    if (similarity > 0.12)
+                    {
+                        // Flag drift if the documentation file has not been edited in the last 15 seconds
+                        var lastWrite = File.GetLastWriteTime(mdFile);
+                        if (DateTime.Now - lastWrite > TimeSpan.FromSeconds(15))
+                        {
+                            string docName = Path.GetFileName(mdFile);
+                            string codeName = Path.GetFileName(filePath);
+                            return new GuardrailResult
+                            {
+                                IsViolated = true,
+                                RuleName = "Documentation Drift Guardrail",
+                                Message = $"Documentation Drift Warning: Code changes in '{codeName}' may require updating '{docName}' (semantic similarity: {(int)(similarity * 100)}%)."
+                            };
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking doc drift: {ex.Message}");
+            }
+
+            return new GuardrailResult { IsViolated = false };
+        }
+
+        private Dictionary<string, int> GetTermFrequencyVector(string text)
+        {
+            var vector = new Dictionary<string, int>();
+            if (string.IsNullOrWhiteSpace(text)) return vector;
+
+            var stopwords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "the", "and", "a", "of", "to", "is", "in", "that", "it", "for", "on", "with", "as", "this", "at", "by", "an", "be", "or", "from", "are", "was", "were", "but"
+            };
+
+            var matches = Regex.Matches(text.ToLower(), @"\b[a-z]{3,20}\b");
+            foreach (Match match in matches)
+            {
+                string word = match.Value;
+                if (!stopwords.Contains(word))
+                {
+                    if (vector.ContainsKey(word))
+                        vector[word]++;
+                    else
+                        vector[word] = 1;
+                }
+            }
+
+            return vector;
+        }
+
+        private double ComputeCosineSimilarity(Dictionary<string, int> vecA, Dictionary<string, int> vecB)
+        {
+            if (vecA.Count == 0 || vecB.Count == 0) return 0.0;
+
+            double dotProduct = 0.0;
+            foreach (var kvp in vecA)
+            {
+                if (vecB.TryGetValue(kvp.Key, out int valB))
+                {
+                    dotProduct += kvp.Value * valB;
+                }
+            }
+
+            double sumA = 0.0;
+            foreach (var val in vecA.Values) sumA += val * val;
+
+            double sumB = 0.0;
+            foreach (var val in vecB.Values) sumB += val * val;
+
+            double magnitudeA = Math.Sqrt(sumA);
+            double magnitudeB = Math.Sqrt(sumB);
+
+            if (magnitudeA == 0.0 || magnitudeB == 0.0) return 0.0;
+
+            return dotProduct / (magnitudeA * magnitudeB);
         }
     }
 }
