@@ -47,3 +47,8 @@ Rules implement the `IGuardrailRule` contract, evaluating the generic token stre
 ### Obsolete Cryptography Scanner (`ObsoleteCryptoRule.cs`)
 - **What it flags**: References to deprecated, cryptographically weak hashing algorithms or ciphers.
 - **Matching pattern**: Detects identifiers or strings referencing obsolete standard protocols (such as `MD5`, `DES`, `RC4`, or `SHA1`).
+
+### Documentation Drift Scanner (`ArchitectureAnalyzer.cs`)
+- **What it flags**: Modifying structural code files without synchronizing changes to the corresponding markdown documentation.
+- **Matching pattern**: Computes a local Bag-of-Words term frequency vector ("embedding") for the added code lines and all workspace markdown files (`docs/*.md`). If the **Cosine Similarity** between the code changes and a documentation file exceeds `0.12` and the markdown file has not been modified in the current session, a warning is raised.
+- **Auto-Clear Resolution**: When the developer saves updates to the referenced markdown file, a watcher event fires, automatically removing the drift warning and resetting the project node to Green.
