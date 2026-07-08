@@ -1,0 +1,315 @@
+/* sidebar.css */
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 1.25rem;
+    color: var(--accent-purple);
+}
+
+.logo span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.status-indicator.active {
+    border-color: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.05);
+}
+
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+}
+
+.status-indicator.active .pulse-dot {
+    background-color: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulse 2s infinite;
+}
+
+.status-text {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.status-indicator.active .status-text {
+    color: #4ade80;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.sidebar-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.nav-section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.75px;
+    margin-bottom: 12px;
+}
+
+.nav-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Controls */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    transition: all var(--transition-speed);
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.input-with-button {
+    display: flex;
+    gap: 8px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.input-with-button button {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.input-with-button button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--text-secondary);
+}
+
+.input-tip {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    width: 100%;
+}
+
+.btn-primary {
+    background: var(--accent-purple);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--accent-purple-hover);
+    box-shadow: 0 0 15px var(--accent-purple-glow);
+}
+
+.btn-primary.running {
+    background: #ef4444;
+}
+
+.btn-primary.running:hover {
+    background: #f87171;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    width: auto;
+}
+
+/* Mini Task Queue Status Box */
+.queue-status-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.queue-status-box .metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.queue-status-box .metric .label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.queue-status-box .metric .value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+}
+
+.task-list-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.task-list-mini::-webkit-scrollbar {
+    width: 4px;
+}
+
+.task-list-mini::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.mini-task-item {
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--accent-blue);
+    font-size: 0.75rem;
+}
+
+.mini-task-item.running {
+    border-left-color: var(--accent-purple);
+}
+
+.mini-task-item .header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+    margin-bottom: 3px;
+    color: var(--text-primary);
+}
+
+.mini-task-item .bar-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    height: 4px;
+    width: 100%;
+}
+
+.mini-task-item .bar {
+    height: 100%;
+    background: var(--accent-blue);
+    border-radius: 2px;
+    transition: width var(--transition-speed);
+}
+
+.mini-task-item.running .bar {
+    background: var(--accent-purple);
+}
+
+.sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+}

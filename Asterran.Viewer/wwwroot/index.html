@@ -10,8 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Styling -->
-    <link rel="stylesheet" href="app.css">
+    
+    <!-- Modular CSS Stylesheets -->
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/architecture.css">
+    <link rel="stylesheet" href="styles/inspection.css">
     
     <!-- React & Babel Standalone CDNs -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -21,7 +25,12 @@
 <body>
     <div id="root"></div>
     
-    <!-- React App Script using Babel transpiler -->
+    <!-- React Modular Script Components -->
+    <script type="text/babel" src="components/Sidebar.js"></script>
+    <script type="text/babel" src="components/ArchitectureMap.js"></script>
+    <script type="text/babel" src="components/InspectionPanel.js"></script>
+    
+    <!-- App Entry Mount Point -->
     <script type="text/babel" src="app.js"></script>
 </body>
 </html>
