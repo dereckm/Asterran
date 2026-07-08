@@ -278,3 +278,71 @@
         box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
     }
 }
+
+/* Floating Zoom & Pan Controls widget */
+.map-controls {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+    background: rgba(18, 18, 20, 0.85);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    border-radius: 8px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 8px var(--accent-purple-glow);
+}
+
+/* Nested folders (node within a node) inside project cards */
+.nested-folder-rect {
+    fill: rgba(255, 255, 255, 0.012);
+    stroke: rgba(255, 255, 255, 0.04);
+    stroke-width: 1;
+    rx: 4px;
+    ry: 4px;
+}
+
+.node-folder-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    fill: var(--accent-purple);
+    fill-opacity: 0.8;
+}
+
+.node-file-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    fill: var(--accent-blue-hover);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.node-file-link:hover {
+    fill: var(--accent-purple-hover);
+}
