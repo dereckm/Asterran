@@ -130,7 +130,41 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
         });
     });
     
-    const nodeWidth = 200; // expanded slightly for nesting layout space
+    const getNodeWidth = (proj) => {
+        let maxChars = proj.ProjectName.length;
+
+        if (proj.ProjectName === expandedProjectName) {
+            const { rootFiles, folderGroups } = groupProjectFiles(proj);
+            
+            rootFiles.forEach(file => {
+                const name = file.split('/').pop();
+                if (name.length + 4 > maxChars) {
+                    maxChars = name.length + 4;
+                }
+            });
+
+            Object.keys(folderGroups).forEach(folderName => {
+                if (folderName.length + 6 > maxChars) {
+                    maxChars = folderName.length + 6;
+                }
+                folderGroups[folderName].forEach(file => {
+                    const baseName = file.split('/').pop();
+                    if (baseName.length + 8 > maxChars) {
+                        maxChars = baseName.length + 8;
+                    }
+                });
+            });
+        }
+
+        // 6.5px per character + padding
+        return Math.max(180, 50 + maxChars * 6.5);
+    };
+
+    const nodeWidths = {};
+    visibleProjects.forEach(proj => {
+        nodeWidths[proj.ProjectName] = getNodeWidth(proj);
+    });
+
     const nodeHeights = {};
     visibleProjects.forEach(proj => {
         if (proj.ProjectName === expandedProjectName) {
@@ -248,6 +282,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                 {visibleProjects.map(proj => {
                                     const pos = positions[proj.ProjectName];
                                     const h = nodeHeights[proj.ProjectName];
+                                    const w = nodeWidths[proj.ProjectName];
                                     const isExpanded = proj.ProjectName === expandedProjectName;
 
                                     // Pre-calculate grouped files for expanded nodes
@@ -257,13 +292,13 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                     return (
                                         <g 
                                             key={proj.ProjectName}
-                                            transform={`translate(${pos.x - nodeWidth / 2}, ${pos.y - h / 2})`}
+                                            transform={`translate(${pos.x - w / 2}, ${pos.y - h / 2})`}
                                             onClick={() => setExpandedProjectName(isExpanded ? null : proj.ProjectName)}
                                             style={{ cursor: "pointer" }}
                                         >
                                             {/* Outer Card Background */}
                                             <rect 
-                                                width={nodeWidth} 
+                                                width={w} 
                                                 height={h} 
                                                 className={`uml-node-rect ${proj.Status.toLowerCase()}`}
                                             />
@@ -281,7 +316,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
 
                                             {isExpanded && (
                                                 <>
-                                                    <line x1={8} y1={36} x2={192} y2={36} stroke="rgba(255, 255, 255, 0.08)" strokeWidth={1} />
+                                                    <line x1={8} y1={36} x2={w - 8} y2={36} stroke="rgba(255, 255, 255, 0.08)" strokeWidth={1} />
                                                     
                                                     {/* Draw root level files */}
                                                     {rootFiles.map(file => {
@@ -341,7 +376,7 @@ function ArchitectureMap({ projects, expandedProjectName, setExpandedProjectName
                                                                 <rect 
                                                                     x={10} 
                                                                     y={folderY} 
-                                                                    width={180} 
+                                                                    width={w - 20} 
                                                                     height={boxHeight} 
                                                                     className="nested-folder-rect"
                                                                 />
