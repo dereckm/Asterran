@@ -1,0 +1,32 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ist/
+node_modules/
+
+# IDE and user settings
+.vs/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# Temporary folder and test workspaces
+TestWorkspace/
+/Asterran.Test/bin/
+/Asterran.Test/obj/
+/Asterran.Viewer/bin/
+/Asterran.Viewer/obj/
+/Asterran.Engine/bin/
+/Asterran.Engine/obj/
+/Asterran.Engine.Guardrails/bin/
+/Asterran.Engine.Guardrails/obj/
+/Asterran.Connectors/bin/
+/Asterran.Connectors/obj/
+/Asterran.Engine.Test/bin/
+/Asterran.Engine.Test/obj/
+/Asterran.Engine.Guardrails.Test/bin/
+/Asterran.Engine.Guardrails.Test/obj/
+/Asterran.Connectors.Test/bin/
+/Asterran.Connectors.Test/obj/
