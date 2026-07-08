@@ -19,4 +19,4 @@ Asterran is a developer-focused codebase monitoring tool designed to track, map,
    Flags risky code on the visual map (turning project nodes Red). The violations persist across clean modifications and stack dynamically until a developer reviews the warning and manually clicks the **Clear** button.
 
 5. **LLM Activity Timelines**
-   Bridges connectivity with LLM transcript streams to log prompt inputs, thoughts, and task execution progress alongside code modifications.
+   Bridges connectivity with LLM transcript streams to log prompt inputs, thoughts, and task execution progress alongside code modifications. Supports two selectable connectors via the sidebar toggle: **Gemini** (Antigravity sessions under `~/.gemini/`) and **Claude** (Claude Code sessions under `~/.claude/projects/`).

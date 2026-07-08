@@ -1,9 +1,11 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 function App() {
     const [workspacePath, setWorkspacePath] = useState("c:\\Asterran");
     const [conversationId, setConversationId] = useState("");
+    const [connectorType, setConnectorType] = useState("gemini");
     const [isRunning, setIsRunning] = useState(false);
+    const [noProjectsWarningDismissed, setNoProjectsWarningDismissed] = useState(false);
     const [changedFiles, setChangedFiles] = useState({});
     const [activeFileDiffPath, setActiveFileDiffPath] = useState(null);
     const [projects, setProjects] = useState([]);
@@ -14,6 +16,11 @@ function App() {
     const [activeRightTab, setActiveRightTab] = useState("guardrails");
     const [activeCheckedProjects, setActiveCheckedProjects] = useState({});
     const [expandedProjectName, setExpandedProjectName] = useState(null);
+    const activeFileDiffPathRef = useRef(null);
+
+    useEffect(() => {
+        activeFileDiffPathRef.current = activeFileDiffPath;
+    }, [activeFileDiffPath]);
 
     useEffect(() => {
         if (window.chrome && window.chrome.webview) {
@@ -37,6 +44,7 @@ function App() {
             case "config":
                 setWorkspacePath(payload.data.workspacePath);
                 setConversationId(payload.data.conversationId || "");
+                setConnectorType(payload.data.connectorType || "gemini");
                 setIsRunning(payload.data.isRunning);
                 break;
             case "engineStatus":
@@ -67,7 +75,7 @@ function App() {
             const next = { ...prev };
             if (fileChange.ChangeType === "Deleted") {
                 delete next[fileChange.FilePath];
-                if (activeFileDiffPath === fileChange.FilePath) {
+                if (activeFileDiffPathRef.current === fileChange.FilePath) {
                     setActiveFileDiffPath(null);
                 }
             } else {
@@ -93,6 +101,7 @@ function App() {
     };
 
     const handleStartStop = () => {
+        if (!isRunning) setNoProjectsWarningDismissed(false);
         postMessageToHost({ command: isRunning ? "stop" : "start" });
     };
 
@@ -105,6 +114,11 @@ function App() {
         postMessageToHost({ command: "setConversationId", conversationId: val });
     };
 
+    const handleConnectorTypeChange = (val) => {
+        setConnectorType(val);
+        postMessageToHost({ command: "setConnectorType", connectorType: val });
+    };
+
     const handleClearTimeline = () => {
         setTimelineItems([]);
     };
@@ -115,13 +129,15 @@ function App() {
 
     return (
         <div className="app-container">
-            <Sidebar 
+            <Sidebar
                 isRunning={isRunning}
                 workspacePath={workspacePath}
                 conversationId={conversationId}
+                connectorType={connectorType}
                 onStartStop={handleStartStop}
                 onBrowseWorkspace={handleBrowseWorkspace}
                 onConversationIdChange={handleConversationIdChange}
+                onConnectorTypeChange={handleConnectorTypeChange}
                 tasks={tasks}
             />
 
@@ -156,8 +172,15 @@ function App() {
                         </div>
 
                         <div className="card-content">
+                            {activeLeftTab === "architecture" && isRunning && projects.length === 0 && !noProjectsWarningDismissed && (
+                                <div className="empty-workspace-warning">
+                                    <i className="fa-solid fa-triangle-exclamation"></i>
+                                    <span>No projects found in <strong>{workspacePath}</strong>. Check that the path contains .csproj files, or dismiss if starting a new project.</span>
+                                    <button className="warning-dismiss-btn" onClick={() => setNoProjectsWarningDismissed(true)} title="Dismiss"><i className="fa-solid fa-xmark"></i></button>
+                                </div>
+                            )}
                             {activeLeftTab === "architecture" ? (
-                                <ArchitectureMap 
+                                <ArchitectureMap
                                     projects={projects}
                                     expandedProjectName={expandedProjectName}
                                     setExpandedProjectName={setExpandedProjectName}

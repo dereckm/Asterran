@@ -56,7 +56,8 @@ namespace Asterran.Engine
             _watcher = new FileSystemWatcher(_workspacePath)
             {
                 IncludeSubdirectories = true,
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime,
+                InternalBufferSize = 65536
             };
 
             _watcher.Created += OnFileSystemEvent;
@@ -115,8 +116,8 @@ namespace Asterran.Engine
             var parts = relativePath.Split(Path.DirectorySeparatorChar);
 
             // Ignore common directories
-            if (parts.Any(p => p == ".git" || p == "bin" || p == "obj" || p == ".vs" || 
-                              p == "node_modules" || p == ".gemini" || p == ".agents" ||
+            if (parts.Any(p => p == ".git" || p == "bin" || p == "obj" || p == ".vs" ||
+                              p == "node_modules" || p == ".gemini" || p == ".claude" || p == ".agents" ||
                               p == "packages" || p == ".idea" || p == "out" || p == "dist"))
             {
                 return true;

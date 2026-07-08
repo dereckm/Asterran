@@ -14,6 +14,7 @@ namespace Asterran.Viewer
         private EngineController _engine;
         private string _workspacePath = "c:\\Asterran";
         private string _conversationId = "";
+        private string _connectorType = "gemini";
         private bool _isEngineRunning = false;
 
         public MainWindow()
@@ -68,7 +69,7 @@ namespace Asterran.Viewer
                 _engine.OnArchitectureUpdate -= Engine_OnArchitectureUpdate;
             }
 
-            _engine = new EngineController(_workspacePath, _conversationId);
+            _engine = new EngineController(_workspacePath, _conversationId, _connectorType);
             _engine.OnActivity += Engine_OnActivity;
             _engine.OnFileChange += Engine_OnFileChange;
             _engine.OnTaskQueueUpdate += Engine_OnTaskQueueUpdate;
@@ -145,6 +146,7 @@ namespace Asterran.Viewer
                                 {
                                     workspacePath = _workspacePath,
                                     conversationId = _conversationId,
+                                    connectorType = _connectorType,
                                     isRunning = _isEngineRunning
                                 });
                                 break;
@@ -170,6 +172,22 @@ namespace Asterran.Viewer
                                 {
                                     _conversationId = convoProp.GetString();
                                     InitEngine();
+                                }
+                                break;
+
+                            case "setConnectorType":
+                                if (root.TryGetProperty("connectorType", out var ctProp))
+                                {
+                                    _connectorType = ctProp.GetString();
+                                    _conversationId = "";
+                                    InitEngine();
+                                    SendToWeb("config", new
+                                    {
+                                        workspacePath = _workspacePath,
+                                        conversationId = _conversationId,
+                                        connectorType = _connectorType,
+                                        isRunning = _isEngineRunning
+                                    });
                                 }
                                 break;
 
@@ -206,6 +224,7 @@ namespace Asterran.Viewer
                 {
                     workspacePath = _workspacePath,
                     conversationId = _conversationId,
+                    connectorType = _connectorType,
                     isRunning = _isEngineRunning
                 });
             }

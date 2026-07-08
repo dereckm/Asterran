@@ -24,7 +24,7 @@ namespace Asterran.Engine
         public string WorkspacePath => _workspacePath;
         public string ConversationId => _conversationId;
 
-        public EngineController(string workspacePath, string conversationId = null)
+        public EngineController(string workspacePath, string conversationId = null, string connectorType = "gemini")
         {
             _workspacePath = Path.GetFullPath(workspacePath);
             _conversationId = conversationId;
@@ -37,7 +37,9 @@ namespace Asterran.Engine
             _taskQueue.TaskProgressUpdated += (s, t) => TriggerQueueUpdate();
             _taskQueue.TaskCompleted += (s, t) => TriggerQueueUpdate();
 
-            _connector = new AntigravityTranscriptConnector(conversationId);
+            _connector = connectorType == "claude"
+                ? (ILlmConnector)new ClaudeTranscriptConnector(conversationId)
+                : new AntigravityTranscriptConnector(conversationId);
 
             _connector.OnActivity += (s, e) =>
             {

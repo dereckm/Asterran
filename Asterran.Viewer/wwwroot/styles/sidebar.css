@@ -171,6 +171,40 @@
     line-height: 1.3;
 }
 
+.connector-toggle {
+    display: flex;
+    gap: 6px;
+}
+
+.connector-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 10px;
+    font-size: 0.78rem;
+    font-family: inherit;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.connector-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+.connector-btn.active {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
 /* Buttons */
 .btn {
     display: inline-flex;

@@ -44,4 +44,6 @@ The test assemblies cover:
 To run the application:
 1. Double-click the **`run.bat`** file in the root directory.
 2. The WPF window will launch, loading the **Architecture Map** tab by default.
-3. Click the **Start Monitor** button in the Control Panel to begin observing folder alterations.
+3. Set the **workspace path** to the directory you want to monitor using the folder icon next to the Path field. If no `.csproj` files are found there, a dismissible warning banner will appear in the Architecture Map.
+4. Select the **LLM connector** (Gemini or Claude) in the sidebar to match the AI tool you're monitoring.
+5. Click the **Start Monitor** button in the Control Panel to begin observing folder alterations.

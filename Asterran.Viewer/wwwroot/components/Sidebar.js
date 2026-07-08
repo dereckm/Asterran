@@ -1,4 +1,7 @@
-function Sidebar({ isRunning, workspacePath, conversationId, onStartStop, onBrowseWorkspace, onConversationIdChange, tasks }) {
+function Sidebar({ isRunning, workspacePath, conversationId, connectorType, onStartStop, onBrowseWorkspace, onConversationIdChange, onConnectorTypeChange, tasks }) {
+    const isClause = connectorType === "claude";
+    const sessionLabel = isClause ? "Claude Session ID" : "Antigravity Session ID";
+    const sessionPlaceholder = isClause ? "Auto-detecting active session..." : "Auto-detecting active session...";
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
@@ -30,12 +33,31 @@ function Sidebar({ isRunning, workspacePath, conversationId, onStartStop, onBrow
                         </div>
                     </div>
                     <div className="form-group">
-                        <label>Antigravity Session ID</label>
-                        <input 
-                            type="text" 
-                            value={conversationId} 
-                            onChange={(e) => onConversationIdChange(e.target.value.trim())} 
-                            placeholder="Auto-detecting active session..." 
+                        <label>LLM Source</label>
+                        <div className="connector-toggle">
+                            <button
+                                className={`connector-btn ${!isClause ? "active" : ""}`}
+                                onClick={() => onConnectorTypeChange("gemini")}
+                                title="Monitor Google Gemini (Antigravity)"
+                            >
+                                <i className="fa-solid fa-robot"></i> Gemini
+                            </button>
+                            <button
+                                className={`connector-btn ${isClause ? "active" : ""}`}
+                                onClick={() => onConnectorTypeChange("claude")}
+                                title="Monitor Claude Code sessions"
+                            >
+                                <i className="fa-solid fa-wand-magic-sparkles"></i> Claude
+                            </button>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label>{sessionLabel}</label>
+                        <input
+                            type="text"
+                            value={conversationId}
+                            onChange={(e) => onConversationIdChange(e.target.value.trim())}
+                            placeholder={sessionPlaceholder}
                         />
                         <span className="input-tip">Leave blank to auto-detect the latest log file.</span>
                     </div>
